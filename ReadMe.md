@@ -6,8 +6,10 @@ Implementação simples do **Ultimate Jogo do Galo** em Java, com duas formas de
 
 ## Como Jogar
 Escrever no terminal:
-  - git clone https://github.com/joaoplazevedo/Ultimate-tic-tac-toe/
-  - javac *.java && java Launcher
+``
+git clone https://github.com/joaoplazevedo/Ultimate-tic-tac-toe/
+javac *.java && java Launcher
+```
 
 ### coisas a fazer:
 - gui: opcoes para ias
