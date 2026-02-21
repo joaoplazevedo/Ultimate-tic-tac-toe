@@ -80,6 +80,13 @@ public class UltimateTabuleiro {
     return '-';
   }
 
+  public boolean isTerminalState() {
+    char end = checkUltimateEnd();
+    if (end == '-')
+      return false;
+    return true;
+  }
+
   public char checkUltimateEnd() {
     char winner = checkUltimateWin();
     if (winner != '-' && winner != 'D')
