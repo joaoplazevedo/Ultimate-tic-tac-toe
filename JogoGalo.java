@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class JogoGalo {
 
@@ -10,8 +11,58 @@ public class JogoGalo {
 
   private static void betterAi(UltimateTabuleiro t) {
     List<int[]> moves = t.getValidMoves(forcedPlay);
-    for (int[] move : moves) {
+    int bestVal = Integer.MAX_VALUE;
+    int[] bestMove = null;
 
+    for (int[] move : moves) {
+      // System.out.println(Arrays.toString(move));
+      UltimateTabuleiro tCopy = t.copy();
+      int forcedPlayCopy = tCopy.play('X', move[0], move[1], move[2]);
+      int val = minimax(tCopy, false, forcedPlayCopy);
+      if (val < bestVal) {
+        // System.out.println("hello");
+        bestVal = val;
+        bestMove = move;
+      }
+    }
+    forcedPlay = t.play('X', bestMove[0], bestMove[1], bestMove[2]);
+  }
+
+  private static int eval(UltimateTabuleiro t) {
+    char end = t.checkUltimateEnd();
+    if (end == 'O')
+      return 1;
+    if (end == 'X')
+      return -1;
+    return 0;
+  }
+
+  private static int minimax(UltimateTabuleiro t, boolean isMax, int forcedPlayCopy) {
+    if (t.isTerminalState()) {
+      // System.out.println("teste");
+      return eval(t);
+    }
+
+    if (isMax) {
+      int val = Integer.MIN_VALUE;
+      List<int[]> moves = t.getValidMoves(forcedPlayCopy);
+      for (int[] move : moves) {
+        UltimateTabuleiro tCopy = t.copy();
+        forcedPlayCopy = tCopy.play('O', move[0], move[1], move[2]);
+        val = Math.max(val, minimax(tCopy, false, forcedPlayCopy));
+      }
+      return val;
+    }
+
+    else { // min turn
+      int val = Integer.MAX_VALUE;
+      List<int[]> moves = t.getValidMoves(forcedPlayCopy);
+      for (int[] move : moves) {
+        UltimateTabuleiro tCopy = t.copy();
+        forcedPlayCopy = tCopy.play('X', move[0], move[1], move[2]);
+        val = Math.min(val, minimax(tCopy, true, forcedPlayCopy));
+      }
+      return val;
     }
   }
 
