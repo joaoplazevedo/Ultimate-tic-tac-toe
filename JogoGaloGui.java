@@ -102,9 +102,39 @@ public class JogoGaloGui {
       }
       return;
     }
+    highlight();
     textoTopo.setForeground((player == 'O') ? Color.BLUE : Color.RED);
     textoTopo.setText("Turno do " + ((player == 'O') ? "O" : "X"));
-    highlight();
+    if (ai != 0 && player == 'X') {
+      if (ai == 1) {
+        int[] move = JogoGalo.randomAi(t, forcedPlay);
+        forcedPlay = t.play(player, move[0], move[1], move[2]);
+        botoes[move[0] - 1][move[1]][move[2]].setText("X");
+        botoes[move[0] - 1][move[1]][move[2]].setForeground(Color.RED);
+        player = 'O';
+      }
+      if (ai == 2) {
+        int[] move = JogoGalo.betterAi(t, forcedPlay);
+        forcedPlay = t.play(player, move[0], move[1], move[2]);
+        botoes[move[0] - 1][move[1]][move[2]].setText("X");
+        botoes[move[0] - 1][move[1]][move[2]].setForeground(Color.RED);
+        player = 'O';
+      }
+      unlight();
+      if (JogoGalo.checkWinOrDraw(t)) {
+        disableBoard();
+        char winner = t.checkUltimateEnd();
+        if (winner == 'D') {
+          textoTopo.setText("Empate!!!!!!!!!!!!!!");
+        } else if (winner == 'X') {
+          textoTopo.setText("'X' Ganhou!!!");
+        } else if (winner == 'O') {
+          textoTopo.setText("'O' Ganhou!!!");
+        }
+        return;
+      }
+      highlight();
+    }
   }
 
   private static void disableBoard() {
