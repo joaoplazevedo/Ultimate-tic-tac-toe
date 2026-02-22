@@ -8,6 +8,51 @@ public class JogoGalo {
   private static char player = 'O';
   private static int forcedPlay = -1; // -1 se nao, 1-9 se sim e qual o tabuleiro
   private static int ai = 0;
+  private static int maxDepth = 5;
+
+  private static int eval(UltimateTabuleiro t, int forcedPlayCopy, boolean isMax) {
+    char end = t.checkUltimateEnd();
+    if (end == 'O')
+      return 9999999;
+    if (end == 'X')
+      return -9999999;
+    if (end == 'D')
+      return 0;
+    int score = 0;
+    score += 18 * stupidHeuristic(t);
+    score += piecesInDiagonals(t);
+    return score;
+  }
+
+  private static int piecesInDiagonals(UltimateTabuleiro t) {
+    int score = 0;
+    for (int b = 1; b <= 9; b++) {
+      for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+          char play = t.getBoard(b).t[i][j];
+          if (play != '-') {
+            if (i == 1 && j == 1) {
+              score += (play == 'O') ? 2 : -2;
+            } else if (i == j || i + j == 2) {
+              score += (play == 'O') ? 1 : -1;
+            }
+          }
+        }
+      }
+    }
+    return score;
+  }
+
+  private static int stupidHeuristic(UltimateTabuleiro t) {
+    int score = 0; // + se o O ganha, - se o X ganha algum tabuleiro
+    for (int b = 1; b <= 9; b++) {
+      if (t.getBoard(b).checkEnd() == 'O')
+        score++;
+      if (t.getBoard(b).checkEnd() == 'X')
+        score--;
+    }
+    return score;
+  }
 
   private static void betterAi(UltimateTabuleiro t) {
     List<int[]> moves = t.getValidMoves(forcedPlay);
@@ -18,7 +63,7 @@ public class JogoGalo {
       // System.out.println(Arrays.toString(move));
       UltimateTabuleiro tCopy = t.copy();
       int forcedPlayCopy = tCopy.play('X', move[0], move[1], move[2]);
-      int val = minimax(tCopy, false, forcedPlayCopy);
+      int val = minimax(tCopy, true, forcedPlayCopy, 0);
       if (val < bestVal) {
         // System.out.println("hello");
         bestVal = val;
@@ -28,19 +73,9 @@ public class JogoGalo {
     forcedPlay = t.play('X', bestMove[0], bestMove[1], bestMove[2]);
   }
 
-  private static int eval(UltimateTabuleiro t) {
-    char end = t.checkUltimateEnd();
-    if (end == 'O')
-      return 1;
-    if (end == 'X')
-      return -1;
-    return 0;
-  }
-
-  private static int minimax(UltimateTabuleiro t, boolean isMax, int forcedPlayCopy) {
-    if (t.isTerminalState()) {
-      // System.out.println("teste");
-      return eval(t);
+  private static int minimax(UltimateTabuleiro t, boolean isMax, int forcedPlayCopy, int depth) {
+    if (t.isTerminalState() || depth == maxDepth) {
+      return eval(t, forcedPlayCopy, isMax);
     }
 
     if (isMax) {
@@ -49,7 +84,7 @@ public class JogoGalo {
       for (int[] move : moves) {
         UltimateTabuleiro tCopy = t.copy();
         forcedPlayCopy = tCopy.play('O', move[0], move[1], move[2]);
-        val = Math.max(val, minimax(tCopy, false, forcedPlayCopy));
+        val = Math.max(val, minimax(tCopy, false, forcedPlayCopy, depth + 1));
       }
       return val;
     }
@@ -60,7 +95,7 @@ public class JogoGalo {
       for (int[] move : moves) {
         UltimateTabuleiro tCopy = t.copy();
         forcedPlayCopy = tCopy.play('X', move[0], move[1], move[2]);
-        val = Math.min(val, minimax(tCopy, true, forcedPlayCopy));
+        val = Math.min(val, minimax(tCopy, true, forcedPlayCopy, depth + 1));
       }
       return val;
     }

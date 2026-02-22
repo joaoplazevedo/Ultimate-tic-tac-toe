@@ -1,6 +1,6 @@
 public class Tabuleiro {
 
-  private char[][] t = new char[3][3];
+  public char[][] t = new char[3][3];
   private int moveCount = 0;
 
   public Tabuleiro() {
