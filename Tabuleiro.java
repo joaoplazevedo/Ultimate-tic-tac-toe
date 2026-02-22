@@ -18,6 +18,7 @@ public class Tabuleiro {
         copia.t[i][j] = this.t[i][j];
       }
     }
+    copia.moveCount = moveCount;
     return copia;
   }
 
