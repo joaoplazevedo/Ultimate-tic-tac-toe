@@ -54,8 +54,8 @@ public class JogoGalo {
     return score;
   }
 
-  private static void betterAi(UltimateTabuleiro t) {
-    List<int[]> moves = t.getValidMoves(forcedPlay);
+  public static int[] betterAi(UltimateTabuleiro t, int forcedPlayCop) {
+    List<int[]> moves = t.getValidMoves(forcedPlayCop);
     int bestVal = Integer.MAX_VALUE;
     int[] bestMove = null;
 
@@ -71,6 +71,7 @@ public class JogoGalo {
       }
     }
     forcedPlay = t.play('X', bestMove[0], bestMove[1], bestMove[2]);
+    return bestMove;
   }
 
   private static int minimax(UltimateTabuleiro t, boolean isMax, int forcedPlayCopy, int depth) {
@@ -101,15 +102,16 @@ public class JogoGalo {
     }
   }
 
-  private static void randomAi(UltimateTabuleiro t) {
+  public static int[] randomAi(UltimateTabuleiro t, int forcedPlayCopy) {
     Random r = new Random();
     int idx;
-    List<int[]> moves = t.getValidMoves(forcedPlay);
+    List<int[]> moves = t.getValidMoves(forcedPlayCopy);
     idx = r.nextInt(moves.size());
     int board = moves.get(idx)[0];
     int i = moves.get(idx)[1];
     int j = moves.get(idx)[2];
     forcedPlay = t.play('X', board, i, j);
+    return moves.get(idx);
   }
 
   private static int[] readInput(UltimateTabuleiro t) {
@@ -183,9 +185,9 @@ public class JogoGalo {
   private static void aiMove(UltimateTabuleiro t) {
     System.out.println("AI is thinking...");
     if (ai == 1)
-      randomAi(t);
+      randomAi(t, forcedPlay);
     if (ai == 2)
-      betterAi(t);
+      betterAi(t, forcedPlay);
     player = (player == 'O') ? 'X' : 'O';
     return;
   }
