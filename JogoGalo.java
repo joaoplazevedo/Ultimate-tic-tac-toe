@@ -19,7 +19,7 @@ public class JogoGalo {
     if (end == 'D')
       return 0;
     int score = 0;
-    score += 18 * stupidHeuristic(t);
+    score += 98 * stupidHeuristic(t);
     score += piecesInDiagonals(t);
     return score;
   }
